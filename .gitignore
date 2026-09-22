@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+**/Library/
+**/Logs/
+research/
+tools/
+backups/
+local/
+package/
+publishing/
+artwork/
+*.zip
+*.user
+*.suo
