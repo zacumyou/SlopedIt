@@ -134,7 +134,11 @@ namespace SlopedIt
             if ((data.m_State & MeshFlags.Decal) == 0 || !m_Prefabs.TryGetPrefab<RenderPrefab>(mesh, out var render)) return false;
             // MeshData.m_DecalLayer describes the mesh's receiving layer, not this decal's projection mask.
             var decal = render.GetComponent<DecalProperties>();
-            return decal != null && (decal.m_LayerMask & DecalLayers.Terrain) != 0;
+            // Imported ground decals may declare only Buildings (e.g. RealVision mask=4).
+            // The receiver mask controls rendering, not whether this projection can be tilted.
+            // Standalone, horizontal projection and functional-object checks remain in TryFootprint.
+            return decal != null && ((decal.m_LayerMask & DecalLayers.Terrain) != 0 ||
+                (Mod.Options?.ForceDecalAlignment ?? true));
         }
 
         public void Stop()

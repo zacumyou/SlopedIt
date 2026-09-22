@@ -39,7 +39,7 @@ namespace SlopedIt
                 updateSystem.UpdateBefore<SlopedDecalSystem, GenerateObjectsSystem>(SystemUpdatePhase.Modification1);
                 Active = true;
                 Status = "Ready / 준비됨";
-                Log.Info("Sloped It 1.0.0 loaded. 5x5 footprint plane fit, 3 passes; before GenerateObjectsSystem. Game SHA256=" + hash);
+                Log.Info("Sloped It 1.0.1 loaded. 5x5 footprint plane fit, 3 passes; force decal alignment=" + Options.ForceDecalAlignment + "; before GenerateObjectsSystem. Game SHA256=" + hash);
             }
             catch (Exception error)
             {
