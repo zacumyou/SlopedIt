@@ -12,10 +12,11 @@ if (Test-Path -LiteralPath $slopedTarget) {
     Copy-Item -LiteralPath $slopedTarget -Destination $slopedBackup -Recurse
 }
 New-Item -ItemType Directory -Path $slopedTarget -Force | Out-Null
-$slopedFiles = @('SlopedIt.dll','SlopedIt.pdb','SlopedIt_win_x86_64.dll','SlopedIt_win_x86_64.pdb')
+$slopedFiles = @('SlopedIt.dll','SlopedIt.pdb','SlopedIt_win_x86_64.dll','SlopedIt_win_x86_64.pdb','SlopedIt.mjs','SlopedIt.mjs.LICENSE.txt','images\SlopedIt\stick-to-ground.svg')
 $slopedManifest = foreach ($name in $slopedFiles) {
     $source = Join-Path $slopedSource $name
     $target = Join-Path $slopedTarget $name
+    New-Item -ItemType Directory -Path (Split-Path $target -Parent) -Force | Out-Null
     Copy-Item -LiteralPath $source -Destination $target -Force
     $sourceHash = (Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash
     $targetHash = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
@@ -29,3 +30,6 @@ Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README.ko.md') -Destination (Jo
 } | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $PSScriptRoot 'research\install.json') -Encoding utf8
 Write-Output "Installed and verified: $slopedTarget"
 $slopedManifest | Format-Table -AutoSize
+
+
+

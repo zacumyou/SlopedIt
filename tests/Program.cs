@@ -52,6 +52,33 @@ static class Program
         Check(!SlopeMath.TryAlign(ref flat, new float3(0), heading, new float2(0), new float2(0), out _), "empty bounds rejected");
         Check(!SlopeMath.TryAlign(ref flat, new float3(float.NaN), heading, new float2(-1), new float2(1), out _), "invalid position rejected");
         Check(!SlopeMath.TryAlign(ref flat, new float3(0), default, new float2(-1), new float2(1), out _), "invalid rotation rejected");
+        var min = new float3(-3, -2, -6);
+        var max = new float3(5, 7, 4);
+        Check(SlopeMath.TrySeat(ref flat, new float3(20, 1000, 30), heading, min, max, 3, out float seat), "flat prop seat");
+        Check(math.abs(seat - 102) < 0.0001f, "bottom pivot and user elevation");
+        var slope = new Terrain { A = 0.8f, B = -0.3f, C = 20 };
+        var origin = new float3(12, 500, -8);
+        Check(SlopeMath.TryAlign(ref slope, origin, heading, min.xz, max.xz, out var tilted), "prop slope");
+        Check(SlopeMath.TrySeat(ref slope, origin, tilted, min, max, 0, out seat), "sloped seat");
+        for (int z = 0; z <= 4; z++)
+        for (int x = 0; x <= 4; x++)
+        {
+            var xz = math.lerp(min.xz, max.xz, new float2(x, z) / 4f);
+            var point = new float3(origin.x, seat, origin.z) + math.rotate(tilted, new float3(xz.x, min.y, xz.y));
+            Check(math.abs(point.y - slope.Height(point)) < 0.0001f, "all planar base samples contact");
+        }
+        origin.y = seat;
+        Check(SlopeMath.TrySeat(ref slope, origin, tilted, min, max, 0, out float repeatSeat) && math.abs(seat-repeatSeat)<0.00001f, "no accumulated seating");
+        Check(SlopeMath.TrySeat(ref curved, origin, tilted, min, max, 0, out seat), "uneven seat");
+        for (int z = 0; z <= 4; z++)
+        for (int x = 0; x <= 4; x++)
+        {
+            var xz = math.lerp(min.xz, max.xz, new float2(x, z) / 4f);
+            var point = new float3(origin.x, seat, origin.z) + math.rotate(tilted, new float3(xz.x, min.y, xz.y));
+            Check(point.y >= curved.Height(point) - 0.0001f, "uneven base samples do not sink");
+        }
+        Check(!SlopeMath.TrySeat(ref invalid, origin, tilted, min, max, 0, out _), "invalid seating terrain");
+        Check(!SlopeMath.TrySeat(ref flat, origin, tilted, max, min, 0, out _), "invalid seating bounds");
         Console.WriteLine($"PASS: {checks} checks; 2000 randomized planes; flat, curved, size, yaw, offset, repeat, and invalid-input cases.");
     }
 }

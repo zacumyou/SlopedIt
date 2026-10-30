@@ -44,7 +44,7 @@ namespace SlopedIt
 
         protected override void OnUpdate()
         {
-            if (!Mod.Active || !(Mod.Options?.Enabled ?? true)) return;
+            if (!Mod.Active) return;
             var tool = m_Tools.activeTool;
             if (tool == null) return;
             // Find It / Anarchy use ObjectToolSystem. The external Line Tool emits the same definitions.
@@ -64,8 +64,16 @@ namespace SlopedIt
                         (creation.m_Flags & (CreationFlags.Delete | CreationFlags.Upgrade | CreationFlags.Relocate | CreationFlags.Attach)) != 0) continue;
                     var definition = EntityManager.GetComponentData<ObjectDefinition>(entity);
                     if (definition.m_ParentMesh >= 0) continue;
-                    if (!TryFootprint(creation, definition, out float2 min, out float2 max)) continue;
-                    if (!SlopeMath.TryAlign(ref sampler, definition.m_Position, definition.m_Rotation, min, max, out var rotation)) continue;
+                    if (!TryFootprint(creation, definition, out float3 min, out float3 max, out bool decal)) continue;
+                    if (decal ? !(Mod.Options?.Enabled ?? true) : !(Mod.Options?.PropsEnabled ?? true)) continue;
+                    if (!SlopeMath.TryAlign(ref sampler, definition.m_Position, definition.m_Rotation, min.xz, max.xz, out var rotation)) continue;
+                    if (!decal)
+                    {
+                        if (!SlopeMath.TrySeat(ref sampler, definition.m_Position, rotation, min, max,
+                            definition.m_Elevation, out float height)) continue;
+                        definition.m_Position.y = height;
+                        definition.m_LocalPosition = definition.m_Position;
+                    }
                     definition.m_Rotation = rotation;
                     definition.m_LocalRotation = rotation; // only standalone definitions reach here
                     EntityManager.SetComponentData(entity, definition);
@@ -73,7 +81,7 @@ namespace SlopedIt
                     if (!m_LoggedFirst)
                     {
                         m_LoggedFirst = true;
-                        Mod.Log.Info($"First decal preview aligned. Prefab={creation.m_Prefab}; footprint={max - min}; position={definition.m_Position}");
+                        Mod.Log.Info($"First preview aligned. Decal={decal}; Prefab={creation.m_Prefab}; footprint={max - min}; position={definition.m_Position}");
                     }
                 }
             }
@@ -85,9 +93,10 @@ namespace SlopedIt
             }
         }
 
-        private bool TryFootprint(CreationDefinition creation, ObjectDefinition definition, out float2 min, out float2 max)
+        private bool TryFootprint(CreationDefinition creation, ObjectDefinition definition, out float3 min, out float3 max, out bool decal)
         {
             min = max = default;
+            decal = false;
             var prefab = creation.m_Prefab;
             if (prefab == Entity.Null || EntityManager.HasComponent<BuildingData>(prefab) ||
                 EntityManager.HasComponent<TreeData>(prefab)) return false;
@@ -106,25 +115,44 @@ namespace SlopedIt
             if (creation.m_SubPrefab != Entity.Null)
             {
                 if (!IsTerrainDecal(creation.m_SubPrefab)) return false;
+                decal = true;
                 var bounds = EntityManager.GetComponentData<MeshData>(creation.m_SubPrefab).m_Bounds;
-                var a = bounds.min.xz * definition.m_Scale.xz;
-                var b = bounds.max.xz * definition.m_Scale.xz;
+                var a = bounds.min * definition.m_Scale;
+                var b = bounds.max * definition.m_Scale;
                 min = math.min(a, b); max = math.max(a, b);
                 return true;
             }
             if (!EntityManager.HasBuffer<SubMesh>(prefab) || !EntityManager.HasComponent<ObjectGeometryData>(prefab)) return false;
             var meshes = EntityManager.GetBuffer<SubMesh>(prefab, true);
             if (meshes.Length == 0) return false;
+            bool anyDecal = false, anySolid = false;
             foreach (var mesh in meshes)
             {
-                if (!IsTerrainDecal(mesh.m_SubMesh)) return false;
-                // Sideways projection meshes are wall decals even without a Wall placement flag.
-                if (math.dot(math.rotate(mesh.m_Rotation, math.up()), math.up()) < 0.999f) return false;
+                if (!EntityManager.HasComponent<MeshData>(mesh.m_SubMesh)) return false;
+                if ((EntityManager.GetComponentData<MeshData>(mesh.m_SubMesh).m_State & MeshFlags.Decal) != 0)
+                    anyDecal = true;
+                else anySolid = true;
             }
+            decal = anyDecal && !anySolid;
+            if (decal)
+            {
+                foreach (var mesh in meshes)
+                    if (!IsTerrainDecal(mesh.m_SubMesh) ||
+                        math.dot(math.rotate(mesh.m_Rotation, math.up()), math.up()) < 0.999f) return false;
+            }
+            else if (!m_Prefabs.TryGetPrefab<StaticObjectPrefab>(prefab, out _)) return false;
             var geometry = EntityManager.GetComponentData<ObjectGeometryData>(prefab);
-            min = geometry.m_Bounds.min.xz;
-            max = geometry.m_Bounds.max.xz;
+            min = geometry.m_Bounds.min;
+            max = geometry.m_Bounds.max;
             return true;
+        }
+
+        internal bool TrySelectedKind(PrefabBase prefab, out bool decal)
+        {
+            decal = false;
+            if (prefab == null || !m_Prefabs.TryGetEntity(prefab, out var entity)) return false;
+            return TryFootprint(new CreationDefinition { m_Prefab = entity },
+                new ObjectDefinition { m_Scale = new float3(1) }, out _, out _, out decal);
         }
 
         private bool IsTerrainDecal(Entity mesh)

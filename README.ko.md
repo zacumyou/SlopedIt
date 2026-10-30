@@ -1,8 +1,10 @@
+> Published source: **1.1.1**. See [CHANGELOG.md](CHANGELOG.md) for the matching Paradox Mods update.
+
 # Sloped It
 
 Automatically align new terrain decals to slopes in Cities: Skylines II, including the hover preview.
 
-**Release:** 1.0.1 · **Paradox Mods compatibility:** 1.6.*
+**Release:** 1.1.1 · **Paradox Mods compatibility:** 1.6.*
 
 I wanted to stamp decals onto hills. Tilting each one was shaving years off my life. Too much work. So I made a mod.
 
@@ -15,7 +17,7 @@ I wanted to stamp decals onto hills. Tilting each one was shaving years off my l
 - Supports imported decal packs such as RealVision Decals with force alignment enabled by default.
 - Leaves existing objects unchanged.
 
-Only standalone ground-facing decals are supported. Wall/attached decals and functional composite prefabs are excluded. This adjusts the decal's projection rotation; it does not deform its mesh. Sharp terrain changes may exceed the projection volume.
+Standalone ground-facing decals and static props are supported. Wall/attached decals and functional composite prefabs are excluded. This adjusts the decal's projection rotation; it does not deform its mesh. Sharp terrain changes may exceed the projection volume.
 
 ## Bug reports
 
@@ -23,7 +25,7 @@ Use this repository's Issues or the linked Paradox Forum thread. Include game/mo
 
 ## Build
 
-Install the official Cities: Skylines II modding toolchain. Its `CSII_*` environment variables must be available. Run `build.ps1` from PowerShell. It builds via the official Mod.props, Mod.targets and ModPostProcessor, then runs the numerical tests. Output is staged in `local/SlopedIt`; the build does not install or publish.
+Install the official Cities: Skylines II modding toolchain. Its `CSII_*` environment variables must be available. Run `npm ci --prefix ui` once, then `build.ps1` from PowerShell. It builds via the official Mod.props, Mod.targets and ModPostProcessor, then runs the numerical tests. Output is staged in `local/SlopedIt`; the build does not install or publish.
 
 Run `install.ps1` with the game closed to back up an existing local installation and install the staged output. Keep only one active local/subscribed copy of the mod.
 
@@ -39,7 +41,7 @@ Official guidance: [Modding Toolchain](https://cs2.paradoxwikis.com/Modding_Tool
 
 시티즈: 스카이라인 II에서 새 지형 데칼을 경사에 맞춥니다. 배치 전 미리보기에도 적용됩니다.
 
-**버전:** 1.0.1 · **Paradox Mods 호환 표기:** 1.6.*
+**버전:** 1.1.1 · **Paradox Mods 호환 표기:** 1.6.*
 
 데칼을 경사면에 새기고 싶었습니다. 하나씩 기울이다 제 인생이 먼저 깎일 것 같았습니다. 귀찮아서 모드로 만들었습니다.
 
@@ -52,7 +54,7 @@ Official guidance: [Modding Toolchain](https://cs2.paradoxwikis.com/Modding_Tool
 - RealVision Decals 같은 외부 데칼도 기본 활성화된 강제 정렬로 지원합니다.
 - 기존 오브젝트는 변경하지 않습니다.
 
-독립 배치하는 지형용 데칼 전용입니다. 벽면·부착형·기능성 복합 에셋은 제외합니다. 메시를 휘게 만드는 기능은 아닙니다. 급격히 꺾인 지형에서는 일부가 잘릴 수 있습니다.
+독립 배치하는 지형용 데칼과 정적 프롭을 지원합니다. 벽면·부착형·기능성 복합 에셋은 제외합니다. 메시를 휘게 만드는 기능은 아닙니다. 급격히 꺾인 지형에서는 일부가 잘릴 수 있습니다.
 
 ## 오류 제보
 
@@ -60,6 +62,6 @@ GitHub Issues 또는 연결된 Paradox Forum 글을 이용해 주세요. 게임�
 
 ## 빌드
 
-공식 모딩 도구를 설치한 뒤 PowerShell에서 `build.ps1`을 실행하세요. `CSII_*` 환경 변수가 필요합니다. 결과는 `local/SlopedIt`에 생성됩니다. 게임을 종료하고 `install.ps1`을 실행하면 기존 로컬 설치를 백업한 뒤 설치합니다. 로컬판과 구독판을 동시에 활성화하지 마세요.
+공식 모딩 도구를 설치한 뒤 `npm ci --prefix ui`를 한 번 실행한 뒤 PowerShell에서 `build.ps1`을 실행하세요. `CSII_*` 환경 변수가 필요합니다. 결과는 `local/SlopedIt`에 생성됩니다. 게임을 종료하고 `install.ps1`을 실행하면 기존 로컬 설치를 백업한 뒤 설치합니다. 로컬판과 구독판을 동시에 활성화하지 마세요.
 
 실제 검토한 게임은 1.6.2f1입니다. 미검토 게임 빌드는 호환성 보호 검사로 중지합니다. 1.6.* 표기가 앞으로 나올 모든 패치의 시험 완료를 뜻하지는 않습니다.

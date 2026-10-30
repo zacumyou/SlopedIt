@@ -11,6 +11,28 @@ namespace SlopedIt
     /// <summary>Deterministic least-squares terrain plane over the projected decal footprint.</summary>
     public static class SlopeMath
     {
+        // Absolute seating height, never a delta from an already corrected preview.
+        // Bounds describe a rigid prop; this does not deform its mesh to follow bumps.
+        public static bool TrySeat<T>(ref T terrain, float3 position, quaternion rotation,
+            float3 min, float3 max, float elevation, out float height) where T : struct, IHeightSampler
+        {
+            height = float.NegativeInfinity;
+            if (!math.all(math.isfinite(min)) || !math.all(math.isfinite(max)) ||
+                !math.all(math.isfinite(position)) || !math.all(math.isfinite(rotation.value)) ||
+                !math.isfinite(elevation) || math.any(max < min)) return false;
+            for (int row = 0; row < 5; row++)
+            for (int col = 0; col < 5; col++)
+            {
+                float2 xz = math.lerp(min.xz, max.xz, new float2(col, row) * 0.25f);
+                float3 offset = math.rotate(rotation, new float3(xz.x, min.y, xz.y));
+                float ground = terrain.Height(position + offset);
+                if (!math.isfinite(ground)) return false;
+                height = math.max(height, ground - offset.y);
+            }
+            height += elevation;
+            return math.isfinite(height);
+        }
+
         public static bool TryAlign<T>(ref T terrain, float3 position, quaternion input,
             float2 boundsMin, float2 boundsMax, out quaternion rotation) where T : struct, IHeightSampler
         {
