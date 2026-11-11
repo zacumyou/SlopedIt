@@ -1,10 +1,16 @@
-> Published source: **1.1.1**. See [CHANGELOG.md](CHANGELOG.md) for the matching Paradox Mods update.
+## 1.1.2 compatibility update
+
+Added the reviewed game build F076DF4B to the compatibility guard. The original build remains supported. API review and C#/UI builds passed. Gameplay testing was skipped at the user's request. The older FD258B39 build remains unreviewed.
+
+검토한 F076DF4B 게임 빌드를 호환성 검사에 추가했습니다. 기존 빌드 지원은 유지합니다. API 검토와 C#/UI 빌드를 완료했으며, 사용자 요청으로 실게임 테스트는 생략했습니다. 이전 FD258B39 빌드는 미검토 상태입니다.
+
+> Published source: **1.1.2**. See [CHANGELOG.md](CHANGELOG.md) for the matching Paradox Mods update.
 
 # Sloped It
 
 Automatically align new terrain decals to slopes in Cities: Skylines II, including the hover preview.
 
-**Release:** 1.1.1 · **Paradox Mods compatibility:** 1.6.*
+**Release:** 1.1.2 · **Paradox Mods compatibility:** 1.6.*
 
 I wanted to stamp decals onto hills. Tilting each one was shaving years off my life. Too much work. So I made a mod.
 
@@ -41,7 +47,7 @@ Official guidance: [Modding Toolchain](https://cs2.paradoxwikis.com/Modding_Tool
 
 시티즈: 스카이라인 II에서 새 지형 데칼을 경사에 맞춥니다. 배치 전 미리보기에도 적용됩니다.
 
-**버전:** 1.1.1 · **Paradox Mods 호환 표기:** 1.6.*
+**버전:** 1.1.2 · **Paradox Mods 호환 표기:** 1.6.*
 
 데칼을 경사면에 새기고 싶었습니다. 하나씩 기울이다 제 인생이 먼저 깎일 것 같았습니다. 귀찮아서 모드로 만들었습니다.
 

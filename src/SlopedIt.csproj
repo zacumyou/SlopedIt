@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configurations>Debug;Release</Configurations>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <AssemblyName>SlopedIt</AssemblyName>
     <RootNamespace>SlopedIt</RootNamespace>
     <AssemblyTitle>Sloped It</AssemblyTitle>
@@ -9,8 +9,14 @@
   </PropertyGroup>
   <Import Project="$(CSII_TOOLPATH)\Mod.props" />
   <Import Project="$(CSII_TOOLPATH)\Mod.targets" />
-  <PropertyGroup><LocalModsPath>$(MSBuildProjectDirectory)\..\local</LocalModsPath></PropertyGroup>
-  
+  <PropertyGroup>
+    <UserDataPath>$(CSII_USERDATAPATH)</UserDataPath>
+    <UnityModProjectPath>$(CSII_UNITYMODPROJECTPATH)</UnityModProjectPath>
+    <ModPostProcessorPath>$(CSII_MODPOSTPROCESSORPATH)</ModPostProcessorPath>
+    <ModPublisherPath>$(CSII_MODPUBLISHERPATH)</ModPublisherPath>
+    <MSCORLIBPath>$(CSII_MSCORLIBPATH)</MSCORLIBPath>
+    <LocalModsPath>$(MSBuildProjectDirectory)\..\local</LocalModsPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Game;Colossal.Core;Colossal.Logging;Colossal.IO.AssetDatabase;Colossal.Collections;Colossal.Mathematics;Colossal.Localization;Colossal.UI;Colossal.UI.Binding;UnityEngine.CoreModule;Unity.Collections;Unity.Entities;Unity.Mathematics">
       <Private>false</Private>

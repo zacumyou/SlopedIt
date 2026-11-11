@@ -11,7 +11,7 @@ module.exports = {
   ] },
   resolve: { extensions: [".tsx", ".ts", ".js"] },
   output: { path: path.resolve(__dirname, "../local/SlopedIt"), filename: "[name].mjs", library: { type: "module" }, publicPath: "coui://ui-mods/" },
-  plugins: [new BannerPlugin({ banner: "Cities: Skylines II UI Module\n\nId: SlopedIt\nAuthor: zacum\nVersion: 1.1.1\nDependencies:", stage: Infinity })],
+  plugins: [new BannerPlugin({ banner: "Cities: Skylines II UI Module\n\nId: SlopedIt\nAuthor: zacum\nVersion: 1.1.2\nDependencies:", stage: Infinity })],
   experiments: { outputModule: true }
 };
 

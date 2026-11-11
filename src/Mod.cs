@@ -33,14 +33,17 @@ namespace SlopedIt
                 using (var sha = SHA256.Create())
                 using (var stream = File.OpenRead(typeof(ObjectToolSystem).Assembly.Location))
                     hash = BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "");
-                if (hash != "AAEE15C4FA41C130ABAA1183840667E4FAAE531D67E8A9FA7536618EFFA2F86A")
+                // Keep the original reviewed build and the November build; do not accept
+                // arbitrary patches just because their public version string matches.
+                if (hash != "AAEE15C4FA41C130ABAA1183840667E4FAAE531D67E8A9FA7536618EFFA2F86A" &&
+                    hash != "F076DF4B70AA0F21A80345E03A052CA2273BC6754F41DAB7E63D837837A43745")
                     throw new InvalidOperationException("Game update requires compatibility review. SHA256=" + hash);
                 m_System = World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<SlopedDecalSystem>();
                 updateSystem.UpdateBefore<SlopedDecalSystem, GenerateObjectsSystem>(SystemUpdatePhase.Modification1);
                 updateSystem.UpdateAt<SlopeUI>(SystemUpdatePhase.UIUpdate);
                 Active = true;
                 Status = "Ready / 준비됨";
-                Log.Info("Sloped It 1.1.1 loaded. 5x5 footprint plane fit, 3 passes; force decal alignment=" + Options.ForceDecalAlignment + "; before GenerateObjectsSystem. Game SHA256=" + hash);
+                Log.Info("Sloped It 1.1.2 loaded. 5x5 footprint plane fit, 3 passes; force decal alignment=" + Options.ForceDecalAlignment + "; before GenerateObjectsSystem. Game SHA256=" + hash);
             }
             catch (Exception error)
             {
